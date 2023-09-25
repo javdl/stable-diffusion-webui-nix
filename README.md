@@ -3,6 +3,11 @@ A browser interface based on Gradio library for Stable Diffusion.
 
 ![](screenshot.png)
 
+## Install with nix
+
+- clone repo
+- `nix develop`
+
 ## Features
 [Detailed feature showcase with images](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Features):
 - Original txt2img and img2img modes
@@ -78,7 +83,7 @@ A browser interface based on Gradio library for Stable Diffusion.
 - Clip skip
 - Hypernetworks
 - Loras (same as Hypernetworks but more pretty)
-- A separate UI where you can choose, with preview, which embeddings, hypernetworks or Loras to add to your prompt 
+- A separate UI where you can choose, with preview, which embeddings, hypernetworks or Loras to add to your prompt
 - Can select to load a different VAE from settings screen
 - Estimated completion time in progress bar
 - API
