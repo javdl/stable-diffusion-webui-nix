@@ -38,3 +38,4 @@ notification.mp3
 /package-lock.json
 /.coverage*
 .direnv/
+.devenv

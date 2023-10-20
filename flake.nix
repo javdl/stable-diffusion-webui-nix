@@ -1,22 +1,39 @@
 {
-    description = "AUTOMATIC1111/stable-diffusion-webui flake";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+    systems.url = "github:nix-systems/default";
+    devenv.url = "github:cachix/devenv";
+  };
 
-    inputs = {
-        nixpkgs.url = github:NixOS/nixpkgs/nixos-unstable;
-        flake-utils.url = github:numtide/flake-utils;
-    };
+  nixConfig = {
+    extra-trusted-public-keys = "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=";
+    extra-substituters = "https://devenv.cachix.org";
+  };
 
-    outputs = { self, nixpkgs, flake-utils }: let
-        isLinux = system: builtins.match ".*linux.*" system != null;
-        linuxSystems = builtins.filter isLinux flake-utils.lib.defaultSystems;
-    in flake-utils.lib.eachSystem linuxSystems (system: let
-            pkgs = import nixpkgs {
-                inherit system;
-                config.allowUnfree = true;
+  outputs = { self, nixpkgs, devenv, systems, ... } @ inputs:
+    let
+      forEachSystem = nixpkgs.lib.genAttrs (import systems);
+    in
+    {
+      devShells = forEachSystem
+        (system:
+          let
+            pkgs = nixpkgs.legacyPackages.${system};
+          in
+          {
+            default = devenv.lib.mkShell {
+              inherit inputs pkgs;
+              modules = [
+                {
+                  # https://devenv.sh/reference/options/
+                  packages = [ pkgs.hello ];
+
+                  enterShell = ''
+                    hello
+                  '';
+                }
+              ];
             };
-        in {
-            devShells.default = import ./impl.nix {inherit pkgs;};
-            devShells.rocm = import ./impl.nix {inherit pkgs; isCUDA=false;};
-        }
-    );
+          });
+    };
 }
